@@ -1,6 +1,6 @@
 import React from 'react'
 import {appContext, connect, store} from "./redux";
-import {connectToUser, userSelector} from "./userDispatcher";
+import {connectToUser, userSelector} from "./connectors/userConnector";
 
 const App = () => {
     return (
