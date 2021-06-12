@@ -16,6 +16,20 @@ const App = () => {
     )
 }
 
+const reducer = (state, {type, payload}) => {
+    if (type === 'updateUserInfo') {
+        return {
+            ...state,
+            user: {
+                ...state.user,
+                ...payload
+            },
+        }
+    } else {
+        return state
+    }
+}
+
 const FirstChild = () => <section>first<User/></section>
 const SecondChild = () => <section>second<UserModifier/></section>
 const ThirdChild = () => <section>third</section>
@@ -27,8 +41,7 @@ const User = () => {
 const UserModifier = () => {
     const {appState, setAppState} = useContext(appContext)
     const onChange = (e) => {
-        appState.user.name = e.target.value
-        setAppState({...appState})
+        setAppState(reducer(appState, {type: 'updateUserInfo', payload: {name: e.target.value}}))
     }
     return <div>
         <input value={appState.user.name}
