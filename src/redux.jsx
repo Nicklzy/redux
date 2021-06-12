@@ -9,6 +9,7 @@ const isStateChange = (newState, oldState) => {
     return false
 }
 
+
 export const store = {
     state: {
         user: {name: 'nick', age: 18},
@@ -18,6 +19,7 @@ export const store = {
         store.state = newState;
         store.listeners.map(fn => fn(store.state));
     },
+    reducer: undefined,
     listeners: [],
     subscribe: (fn) => {
         store.listeners.push(fn)
@@ -28,18 +30,10 @@ export const store = {
     }
 }
 
-const reducer = (state, {type, payload}) => {
-    if (type === 'updateUserInfo') {
-        return {
-            ...state,
-            user: {
-                ...state.user,
-                ...payload
-            },
-        }
-    } else {
-        return state
-    }
+export const createStore = (reducer,initState) => {
+    store.reducer = reducer;
+    store.state = initState;
+    return store;
 }
 
 export const connect = (selector, mapDispatchToProps) => (Component) => {
@@ -48,7 +42,7 @@ export const connect = (selector, mapDispatchToProps) => (Component) => {
         const [, update] = useState(0);
         const data = selector ? selector(state) : {state}
         const dispatch = (action) => {
-            setState(reducer(state, action))
+            setState(store.reducer(state, action))
         }
         const dispatchers = mapDispatchToProps ? mapDispatchToProps(dispatch) : {dispatch}
         useEffect(() => {
