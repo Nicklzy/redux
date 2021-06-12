@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 
 const isStateChange = (newState, oldState) => {
     for (const key in newState) {
-        if (newState[key] !== oldState[key]) {
+        if (newState.hasOwnProperty(key) && newState[key] !== oldState[key]) {
             return true
         }
     }
@@ -42,11 +42,15 @@ const reducer = (state, {type, payload}) => {
     }
 }
 
-export const connect = (selector) => (Component) => {
+export const connect = (selector, mapDispatchToProps) => (Component) => {
     return (props) => {
         const {state, setState} = useContext(appContext)
         const [, update] = useState(0);
         const data = selector ? selector(state) : {state}
+        const dispatch = (action) => {
+            setState(reducer(state, action))
+        }
+        const dispatchers = mapDispatchToProps ? mapDispatchToProps(dispatch) : {dispatch}
         useEffect(() => {
             return store.subscribe(() => {
                 const newState = store.state;
@@ -56,10 +60,7 @@ export const connect = (selector) => (Component) => {
                 }
             })
         }, [selector])
-        const dispatch = (action) => {
-            setState(reducer(state, action))
-        }
-        return <Component {...props} dispatch={dispatch} {...data}/>
+        return <Component {...props} {...dispatchers} {...data}/>
     }
 }
 
