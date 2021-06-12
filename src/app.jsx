@@ -30,23 +30,17 @@ const reducer = (state, {type, payload}) => {
     }
 }
 
-const FirstChild = () => <section>first<User/></section>
-const SecondChild = () => <section>second<Wrapper/></section>
-const ThirdChild = () => <section>third</section>
-const User = () => {
-    const contextValue = useContext(appContext)
-    return <div>User:{contextValue.appState.user.name}</div>
-}
-
-const Wrapper = () => {
-    const {appState, setAppState} = useContext(appContext)
-    const dispatch = (action) => {
-        setAppState(reducer(appState, action))
+const connect = (Component) => {
+    return (props) => {
+        const {appState, setAppState} = useContext(appContext)
+        const dispatch = (action) => {
+            setAppState(reducer(appState, action))
+        }
+        return <Component {...props} dispatch={dispatch} state={appState}/>
     }
-    return <UserModifier dispatch={dispatch} state={appState}/>
 }
 
-const UserModifier = ({dispatch, state}) => {
+const UserModifier = connect(({dispatch, state}) => {
     const onChange = (e) => {
         dispatch({type: 'updateUserInfo', payload: {name: e.target.value}})
     }
@@ -54,6 +48,15 @@ const UserModifier = ({dispatch, state}) => {
         <input value={state.user.name}
                onChange={onChange}/>
     </div>
+})
+
+const FirstChild = () => <section>first<User/></section>
+const SecondChild = () => <section>second<UserModifier/></section>
+const ThirdChild = () => <section>third</section>
+const User = () => {
+    const contextValue = useContext(appContext)
+    return <div>User:{contextValue.appState.user.name}</div>
 }
+
 
 export default App;
