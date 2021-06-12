@@ -31,20 +31,27 @@ const reducer = (state, {type, payload}) => {
 }
 
 const FirstChild = () => <section>first<User/></section>
-const SecondChild = () => <section>second<UserModifier/></section>
+const SecondChild = () => <section>second<Wrapper/></section>
 const ThirdChild = () => <section>third</section>
 const User = () => {
     const contextValue = useContext(appContext)
     return <div>User:{contextValue.appState.user.name}</div>
 }
 
-const UserModifier = () => {
+const Wrapper = () => {
     const {appState, setAppState} = useContext(appContext)
+    const dispatch = (action) => {
+        setAppState(reducer(appState, action))
+    }
+    return <UserModifier dispatch={dispatch} state={appState}/>
+}
+
+const UserModifier = ({dispatch, state}) => {
     const onChange = (e) => {
-        setAppState(reducer(appState, {type: 'updateUserInfo', payload: {name: e.target.value}}))
+        dispatch({type: 'updateUserInfo', payload: {name: e.target.value}})
     }
     return <div>
-        <input value={appState.user.name}
+        <input value={state.user.name}
                onChange={onChange}/>
     </div>
 }
