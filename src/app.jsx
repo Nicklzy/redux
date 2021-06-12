@@ -25,7 +25,7 @@ const UserModifier = connect((state) => ({
 
 const FirstChild = () => <section>first<User/></section>
 const SecondChild = () => <section>second<UserModifier/></section>
-const ThirdChild = () => <section>third</section>
+const ThirdChild = connect(state => ({group: state.group}))(({group}) => <section>group: {group} </section>)
 const User = connect()(({state}) => {
     return <div>User:{state.user.name}</div>
 })
