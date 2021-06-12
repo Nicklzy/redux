@@ -11,12 +11,14 @@ const App = () => {
     )
 }
 
-const UserModifier = connect(({dispatch, state}) => {
+const UserModifier = connect((state) => ({
+    user: state.user
+}))(({dispatch, user}) => {
     const onChange = (e) => {
         dispatch({type: 'updateUserInfo', payload: {name: e.target.value}})
     }
     return <div>
-        <input value={state.user.name}
+        <input value={user.name}
                onChange={onChange}/>
     </div>
 })
@@ -24,7 +26,7 @@ const UserModifier = connect(({dispatch, state}) => {
 const FirstChild = () => <section>first<User/></section>
 const SecondChild = () => <section>second<UserModifier/></section>
 const ThirdChild = () => <section>third</section>
-const User = connect(({state}) => {
+const User = connect()(({state}) => {
     return <div>User:{state.user.name}</div>
 })
 
